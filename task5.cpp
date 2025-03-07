@@ -7,26 +7,26 @@ using namespace std;
 
 class complex 
 {
-public:
-void vvod();
-double modul();
-void show_complex();
-complex add (complex b);
-complex sub(complex b);
-complex mul(complex b);
-complex div(complex b);
-private:
-double x;
-double y;
+    public:
+        void vvod();
+        double modul();
+        void show_complex();
+        complex add (complex b);
+        complex sub(complex b);
+        complex mul(complex b);
+        complex div(complex b);
+    private:
+        double x;
+        double y;
 };
 
 void complex::vvod()
 {
-cout<<"Vvedite x: ";
-cin>>x;
-cout<<"Vvedite y: ";
-cin>>y;
-show_complex();
+    cout<<"Vvedite x: ";
+    cin>>x;
+    cout<<"Vvedite y: ";
+    cin>>y;
+    show_complex();
 }
 double complex::modul()
     {
@@ -68,7 +68,7 @@ complex complex::div(complex b){
 void complex::show_complex()
 {
     if (y>=0) 
-    cout<<x<<"+"<<y<<"i"<<endl;
+        cout<<x<<"+"<<y<<"i"<<endl;
     else cout<<x<<y<<"i"<<endl;
 }
 int main()
