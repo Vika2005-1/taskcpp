@@ -73,7 +73,6 @@ rational rational:: mul(const rational& b){
     return rational(newNumerator, newDenominator);
 }
 rational rational:: div(const rational& b){
-
     int newNumerator = numerator * b.denominator;
     int newDenominator = denominator * b.numerator;
     return rational(newNumerator, newDenominator);
