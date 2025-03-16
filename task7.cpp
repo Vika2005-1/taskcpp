@@ -176,7 +176,6 @@ Matrix Matrix::div(Matrix b) {
     }
     return res;
 }
-
 int main(){
     rational a (1,2);
     rational b (1,4);
