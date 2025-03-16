@@ -181,7 +181,9 @@ int main(){
     rational a (1,2);
     rational b (1,4);
     a.show_rational();
+    cout<<endl;
     b.show_rational();
+    cout<<endl;
     a.norm();
     b.norm();
     cout<<"Summa ravna ";
