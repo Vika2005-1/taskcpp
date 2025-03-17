@@ -1,0 +1,148 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+class rational{
+    public:
+        rational();
+        rational(int num, int denom=1);
+        rational input_rational();
+        rational add(rational b);
+        rational sub(rational b);
+        rational mul(rational b);
+        rational div(rational b);
+        rational operator+(rational b)
+        {
+            rational res(0,0);
+            res.numerator = numerator * b.denominator + b.numerator * denominator;
+            res.denominator = denominator * b.denominator;
+            res.norm();
+            return res;
+        }
+        rational operator-(rational b)
+        {
+            rational res(0,0);
+            res.numerator = numerator * b.denominator - b.numerator * denominator;
+            res.denominator = denominator * b.denominator;
+            res.norm();
+            return res;
+        }
+        rational operator*(rational b)
+        {
+            rational res(0,0);
+            res.numerator = numerator * b.numerator;
+            res.denominator = denominator * b.denominator;
+            res.norm();
+            return res;
+        }
+        rational operator/(rational b)
+        {
+            rational res(0,0);
+            res.numerator = numerator * b.denominator;
+            res.denominator = denominator * b.numerator;
+            res.norm();
+            return res;
+        }
+        void norm();
+        void show_rational();
+    private:
+        int numerator;
+        int denominator;
+        int gcd(int A, int B);
+};
+
+rational::rational(){
+    cout<<"Vvedite numerator: "<<endl;
+    cin>>numerator;
+    cout<<"Vvedite denominator "<<endl;
+    cin>>denominator;
+}
+
+rational::rational(int num, int denom){
+    numerator=num;
+    denominator=denom;
+}
+
+int rational ::  gcd(int A, int B) {
+    while (B != 0) {
+        int temp = B;
+        B = A % B;
+        A = temp;
+    }
+    return A;
+}
+
+void rational::norm() {
+    int C = gcd(abs(numerator), abs(denominator));
+    numerator /= C;
+    denominator /= C;
+}
+
+rational rational:: add(rational b) {
+    rational res(0,0);
+    res.numerator = numerator * b.denominator + b.numerator * denominator;
+    res.denominator = denominator * b.denominator;
+    return res;
+}
+
+rational rational:: sub(rational b) {
+    rational res(0,0);
+    res.numerator = numerator * b.denominator - b.numerator * denominator;
+    res.denominator = denominator * b.denominator;
+    return res;
+}
+
+rational rational:: mul(rational b) {
+    rational res(0,0);
+    res.numerator = numerator * b.numerator;
+    res.denominator = denominator * b.denominator;
+    return res;
+}
+
+rational rational:: div(rational b) {
+    rational res(0,0);
+    res.numerator = numerator * b.denominator;
+    res.denominator = denominator * b.numerator;
+    return res;
+}
+
+void rational::show_rational(){
+    if (denominator==1){
+        cout<<numerator;
+ }
+    else{
+        cout<<numerator<<"/"<<denominator;
+    }
+}
+
+int main(){
+    rational a (1,2);
+    rational b (1,4);
+    cout<<"Первое рациональное число: ";
+    a.show_rational();
+    cout<<endl;
+    cout<<"Второе рациональное число: ";
+    b.show_rational();
+    cout<<endl;
+    a.norm();
+    b.norm();
+    cout<<"Сумма рациональных чисел равна = ";
+    rational sum=a+b;
+    sum.show_rational();
+    //a.add(b).show_rational();
+    cout<<endl;
+    cout<<"Разность рациональных чисел равна = ";
+    rational raz=a-b;
+    raz.show_rational();
+    //a.sub(b).show_rational();
+    cout<<endl;
+    cout<<"Произведение рациональных чисел равно = ";
+    rational pr=a*b;
+    pr.show_rational();
+    cout<<endl;
+    cout<<"Деление рациональных чисел равно = ";
+    rational del=a/b;
+    del.show_rational();
+    //a.div(b).show_rational();
+    cout<<endl;
+    return 0;
+}
