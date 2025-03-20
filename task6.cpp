@@ -18,6 +18,10 @@ class rational{
         };
         rational input_rational();
         rational add(const rational& b) const;
+        rational operator+(const rational& b) const;
+        rational operator-(const rational& b) const;
+        rational operator*(const rational& b) const;
+        rational operator/(const rational& b) const;
         rational sub(const rational& b) const;
         rational mul(const rational& b) const;
         rational div(const rational& b) const;
@@ -67,7 +71,19 @@ rational rational:: add(const rational& b) const{
     return rational(newNumerator, newDenominator);
 }
 
+rational rational:: operator+(const rational& b) const{
+    int newNumerator = numerator * b.denominator + b.numerator * denominator;
+    int newDenominator = denominator * b.denominator;
+    return rational(newNumerator, newDenominator);
+}
+
 rational rational:: sub(const rational& b) const{
+    int newNumerator = numerator * b.denominator - b.numerator * denominator;
+    int newDenominator = denominator * b.denominator;
+    return rational(newNumerator, newDenominator);
+}
+
+rational rational:: operator-(const rational& b) const{
     int newNumerator = numerator * b.denominator - b.numerator * denominator;
     int newDenominator = denominator * b.denominator;
     return rational(newNumerator, newDenominator);
@@ -78,12 +94,23 @@ rational rational:: mul(const rational& b) const{
     int newDenominator = denominator * b.denominator;
     return rational(newNumerator, newDenominator);
 }
+rational rational:: operator*(const rational& b) const{
+    int newNumerator = numerator * b.numerator;
+    int newDenominator = denominator * b.denominator;
+    return rational(newNumerator, newDenominator);
+}
+
 rational rational:: reverse() const{
     return rational(denominator, numerator);
 }
 
 
 rational rational:: div(const rational& b) const{
+    rational c=b.reverse();
+    return mul(c);
+}
+
+rational rational:: operator/(const rational& b) const{
     rational c=b.reverse();
     return mul(c);
 }
@@ -204,6 +231,7 @@ int main(){
         rational a (1,2);
         rational b (1,4);
         Matrix c (2,2);
+        
         vector<vector<rational>> values = {
             {a, b},
             {a, b}
@@ -234,20 +262,4 @@ int main(){
     char r;
     cin>>r;
     return 0;
-        a.show_rational();
-        b.show_rational();
-        cout<<"Summa rational chisel ravno: "<<endl;
-        a.add(b).show_rational();
-        cout<<"Raznost rational chisel ravno: "<<endl;
-        a.sub(b).show_rational();
-        cout<<"Proizvedenie rational chisel ravno: "<<endl;
-        a.mul(b).show_rational();
-        cout<<"Delenie rational chisel ravno: "<<endl;
-        a.div(b).show_rational();
-        char r;
-        cin>>r;
-        return 0;
-    }catch (const exception& e) {
-        cerr << "Error: " << e.what() << endl;
-    }
 }
