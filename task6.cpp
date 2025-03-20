@@ -18,19 +18,9 @@ class rational{
         };
         rational input_rational();
         rational add(const rational& b) const;
-<<<<<<< HEAD
-        rational operator+(const rational& b) const;
-        rational sub(const rational& b) const;
-        rational operator-(const rational& b) const;
-        rational mul(const rational& b) const;
-        rational operator*(const rational& b) const;
-        rational div(const rational& b) const;
-        rational operator/(const rational& b) const;
-=======
         rational sub(const rational& b) const;
         rational mul(const rational& b) const;
         rational div(const rational& b) const;
->>>>>>> 24f81805ad8ee3efca020a03d572bccff1a5b763
         rational reverse() const;
         void norm();
         int gcd(int a, int b); //Вычисление НОД по алгоритму Евклида
@@ -77,50 +67,20 @@ rational rational:: add(const rational& b) const{
     return rational(newNumerator, newDenominator);
 }
 
-<<<<<<< HEAD
-rational rational:: operator+(const rational& b) const{
-    int newNumerator = numerator * b.denominator + b.numerator * denominator;
-    int newDenominator = denominator * b.denominator;
-    return rational(newNumerator, newDenominator);
-}
-
-=======
->>>>>>> 24f81805ad8ee3efca020a03d572bccff1a5b763
 rational rational:: sub(const rational& b) const{
     int newNumerator = numerator * b.denominator - b.numerator * denominator;
     int newDenominator = denominator * b.denominator;
     return rational(newNumerator, newDenominator);
 }
 
-<<<<<<< HEAD
-rational rational:: operator-(const rational& b) const{
-    int newNumerator = numerator * b.denominator - b.numerator * denominator;
-    int newDenominator = denominator * b.denominator;
-    return rational(newNumerator, newDenominator);
-}
-
-=======
->>>>>>> 24f81805ad8ee3efca020a03d572bccff1a5b763
 rational rational:: mul(const rational& b) const{
     int newNumerator = numerator * b.numerator;
     int newDenominator = denominator * b.denominator;
     return rational(newNumerator, newDenominator);
 }
-<<<<<<< HEAD
-
-rational rational:: operator*(const rational& b) const{
-    int newNumerator = numerator * b.numerator;
-    int newDenominator = denominator * b.denominator;
-    return rational(newNumerator, newDenominator);
-}
 rational rational:: reverse() const{
     return rational(denominator, numerator);
 }
-=======
-rational rational:: reverse() const{
-    return rational(denominator, numerator);
-}
->>>>>>> 24f81805ad8ee3efca020a03d572bccff1a5b763
 
 
 rational rational:: div(const rational& b) const{
@@ -128,14 +88,6 @@ rational rational:: div(const rational& b) const{
     return mul(c);
 }
 
-<<<<<<< HEAD
-rational rational:: operator/(const rational& b) const{
-    rational c=b.reverse();
-    return mul(c);
-}
-
-=======
->>>>>>> 24f81805ad8ee3efca020a03d572bccff1a5b763
 void rational::show_rational(){
         if (denominator==1){
             cout<<numerator;
