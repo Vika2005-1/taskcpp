@@ -177,8 +177,7 @@ Matrix Matrix::operator+(const Matrix& d) const
         for (int j=0; j<cols; j++)
         {
             res.data[i][j]=data[i][j]+d.data[i][j];
-        }
-        
+        } 
     }
     return res;
 }
