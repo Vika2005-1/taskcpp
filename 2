@@ -1,0 +1,192 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+class rational {
+public:
+    rational() : numerator(0), denominator(1) {}
+    rational(int num, int denom = 1) : numerator(num), denominator(denom) {
+        if (denominator == 0) {
+            cout << "Error: Denominator cannot be zero!" << endl;
+            denominator = 1;
+        }
+        norm();
+    }
+
+    rational operator+(const rational& b) const {
+        return rational(numerator * b.denominator + b.numerator * denominator, denominator * b.denominator);
+    }
+
+    rational operator-(const rational& b) const {
+        return rational(numerator * b.denominator - b.numerator * denominator, denominator * b.denominator);
+    }
+
+    rational operator*(const rational& b) const {
+        return rational(numerator * b.numerator, denominator * b.denominator);
+    }
+
+    rational operator/(const rational& b) const {
+        if (b.numerator == 0) {
+            cout << "Error: Division by zero!" << endl;
+            return rational(0, 1);
+        }
+        return rational(numerator * b.denominator, denominator * b.numerator);
+    }
+
+    void norm() {
+        int C = gcd(abs(numerator), abs(denominator));
+        numerator /= C;
+        denominator /= C;
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+    }
+
+    void show_rational() const {
+        if (denominator == 1) {
+            cout << numerator;
+        } else {
+            cout << numerator << "/" << denominator;
+        }
+    }
+
+private:
+    int numerator;
+    int denominator;
+
+    int gcd(int A, int B) const {
+        while (B != 0) {
+            int temp = B;
+            B = A % B;
+            A = temp;
+        }
+        return A;
+    }
+};
+
+class matrix {
+public:
+    matrix(int rows, int cols) : rows(rows), cols(cols), data(rows, vector<rational>(cols)) {}
+
+    void input_matrix() {
+        cout << "Введите элементы матрицы (" << rows << "x" << cols << "):" << endl;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                int num, denom;
+                cout << "Элемент [" << i << "][" << j << "]: ";
+                cout << "Введите числитель: ";
+                cin >> num;
+                cout << "Введите знаменатель: ";
+                cin >> denom;
+                data[i][j] = rational(num, denom);
+            }
+        }
+    }
+
+    void show_matrix() const {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                data[i][j].show_rational();
+                cout << "\t";
+            }
+            cout << endl;
+        }
+    }
+
+    matrix operator+(const matrix& other) const {
+        if (rows != other.rows || cols != other.cols) {
+            cout << "Error: Matrices dimensions do not match for addition!" << endl;
+            return matrix(0, 0);
+        }
+        matrix result(rows, cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                result.data[i][j] = data[i][j] + other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    matrix operator-(const matrix& other) const {
+        if (rows != other.rows || cols != other.cols) {
+            cout << "Error: Matrices dimensions do not match for subtraction!" << endl;
+            return matrix(0, 0);
+        }
+        matrix result(rows, cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                result.data[i][j] = data[i][j] - other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    matrix operator*(const matrix& other) const {
+        if (cols != other.rows) {
+            cout << "Error: Matrices dimensions do not match for multiplication!" << endl;
+            return matrix(0, 0);
+        }
+        matrix result(rows, other.cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < other.cols; ++j) {
+                rational sum(0, 1);
+                for (int k = 0; k < cols; ++k) {
+                    sum = sum + data[i][k] * other.data[k][j];
+                }
+                result.data[i][j] = sum;
+            }
+        }
+        return result;
+    }
+
+    matrix operator/(const matrix& other) const {
+        if (cols != other.rows || other.cols != other.rows) {
+            cout << "Error: Matrices dimensions do not match for division!" << endl;
+            return matrix(0, 0);
+        }
+        // Деление матриц — это умножение на обратную матрицу, что требует реализации нахождения обратной матрицы.
+        // В данном примере деление не реализовано, так как это сложная операция.
+        cout << "Error: Matrix division is not implemented!" << endl;
+        return matrix(0, 0);
+    }
+
+private:
+    int rows, cols;
+    vector<vector<rational>> data;
+};
+
+int main() {
+    int rows, cols;
+    cout << "Введите размеры матриц (строки и столбцы): ";
+    cin >> rows >> cols;
+
+    matrix A(rows, cols);
+    matrix B(rows, cols);
+
+    cout << "Ввод матрицы A:" << endl;
+    A.input_matrix();
+    cout << "Ввод матрицы B:" << endl;
+    B.input_matrix();
+
+    cout << "Матрица A:" << endl;
+    A.show_matrix();
+    cout << "Матрица B:" << endl;
+    B.show_matrix();
+
+    cout << "Сумма матриц A + B:" << endl;
+    (A + B).show_matrix();
+
+    cout << "Разность матриц A - B:" << endl;
+    (A - B).show_matrix();
+
+    cout << "Произведение матриц A * B:" << endl;
+    (A * B).show_matrix();
+
+    // Деление матриц не реализовано
+    cout << "Деление матриц A / B:" << endl;
+    (A / B).show_matrix();
+
+    return 0;
+}
