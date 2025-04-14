@@ -10,17 +10,45 @@ struct Node
 
 Node *first(int d);
 void add(Node **pend, int d);
+Node *sortirovka(Node *list1, Node *list2);
 
 int main()
 {
-    Node *pbeg=first(1);
-    Node *pend=pbeg;
-    for (int i=2; i<6; i++)add(&pend, i);
-    Node *pv=pbeg;
-    while (pv){
-        cout<<pv->d<<" ";
-        pv=pv->next;
+    int num, count;
+    cout<<"Введите количество элементов, которые хотите добавить в первый список: ";
+    cin>>count;
+    cout<<"Введите "<<count<<" элементы в первом списке: ";
+    cin>>num;
+    Node *pbeg1=first(num);
+    Node *pend1=pbeg1;
+    for (int i=1; i<count; i++){
+        cin>>num;
+        add(&pend1, num);
     }
+    cout<<"Введите количество элементов, которые хотите добавить во второй список: ";
+    cin>>count;
+    cout<<"Введите "<<count<<" элементы во втором списке: ";
+    cin>>num;
+    Node *pbeg2=first(num);
+    Node *pend2=pbeg2;
+    for (int i=1; i<count; i++){
+        cin>>num;
+        add(&pend2, num);
+    }
+    cout<<"Первый список: ";
+    Node *pv1=pbeg1;
+    while (pv1){
+        cout<<pv1->d<<" ";
+        pv1=pv1->next;
+    }
+    cout<<endl;
+    cout<<"Второй список: ";
+    Node *pv2=pbeg2;
+    while (pv2){
+        cout<<pv2->d<<" ";
+        pv2=pv2->next;
+    }
+    cout<<endl;
     return 0;
 }
 
