@@ -1,0 +1,44 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    int d;
+    Node *next;
+    Node *prev;
+};
+
+Node *first(int d);
+void add(Node **pend, int d);
+
+int main()
+{
+    Node *pbeg=first(1);
+    Node *pend=pbeg;
+    for (int i=2; i<6; i++)add(&pend, i);
+    Node *pv=pbeg;
+    while (pv){
+        cout<<pv->d<<" ";
+        pv=pv->next;
+    }
+    return 0;
+}
+
+Node *first(int d)
+{
+    Node *pv=new Node;
+    pv->d=d;
+    pv->next=0;
+    pv->prev=0;
+    return pv;
+}
+
+void add(Node **pend, int d)
+{
+    Node *pv=new Node;
+    pv->d=d;
+    pv->next=0;
+    pv->prev=*pend;
+    (*pend)->next=pv;
+    *pend=pv;
+}
