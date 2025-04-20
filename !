@@ -1,4 +1,5 @@
 #include <iostream>
+
 using namespace std;
 
 struct Node
@@ -11,62 +12,147 @@ struct Node
 Node *first(int d);
 void add(Node **pend, int d);
 Node *sortirovka(Node *list1, Node *list2);
+void printList(Node *list);
 
 int main()
 {
     int num, count;
-    cout<<"Введите количество элементов, которые хотите добавить в первый список: ";
-    cin>>count;
-    cout<<"Введите "<<count<<" элементы в первом списке: ";
-    cin>>num;
-    Node *pbeg1=first(num);
-    Node *pend1=pbeg1;
-    for (int i=1; i<count; i++){
-        cin>>num;
+    
+    // Ввод первого списка
+    cout << "Введите количество элементов, которые хотите добавить в первый список: ";
+    cin >> count;
+    cout << "Введите " << count << " элементы в первом списке: ";
+    cin >> num;
+    Node *pbeg1 = first(num);
+    Node *pend1 = pbeg1;
+    for (int i = 1; i < count; i++) {
+        cin >> num;
         add(&pend1, num);
     }
-    cout<<"Введите количество элементов, которые хотите добавить во второй список: ";
-    cin>>count;
-    cout<<"Введите "<<count<<" элементы во втором списке: ";
-    cin>>num;
-    Node *pbeg2=first(num);
-    Node *pend2=pbeg2;
-    for (int i=1; i<count; i++){
-        cin>>num;
+
+    // Ввод второго списка
+    cout << "Введите количество элементов, которые хотите добавить во второй список: ";
+    cin >> count;
+    cout << "Введите " << count << " элементы во втором списке: ";
+    cin >> num;
+    Node *pbeg2 = first(num);
+    Node *pend2 = pbeg2;
+    for (int i = 1; i < count; i++) {
+        cin >> num;
         add(&pend2, num);
     }
-    cout<<"Первый список: ";
-    Node *pv1=pbeg1;
-    while (pv1){
-        cout<<pv1->d<<" ";
-        pv1=pv1->next;
-    }
-    cout<<endl;
-    cout<<"Второй список: ";
-    Node *pv2=pbeg2;
-    while (pv2){
-        cout<<pv2->d<<" ";
-        pv2=pv2->next;
-    }
-    cout<<endl;
+
+    // Вывод первого и второго списков
+    cout << "Первый список: ";
+    printList(pbeg1);
+    cout << "Второй список: ";
+    printList(pbeg2);
+
+    // Создание и вывод третьего списка
+    Node *pbeg3 = sortirovka(pbeg1, pbeg2);
+    cout << "Третий список (отрицательные, нули, положительные): ";
+    printList(pbeg3);
+
     return 0;
 }
 
 Node *first(int d)
 {
-    Node *pv=new Node;
-    pv->d=d;
-    pv->next=0;
-    pv->prev=0;
+    Node *pv = new Node;
+    pv->d = d;
+    pv->next = 0;
+    pv->prev = 0;
     return pv;
 }
 
 void add(Node **pend, int d)
 {
-    Node *pv=new Node;
-    pv->d=d;
-    pv->next=0;
-    pv->prev=*pend;
-    (*pend)->next=pv;
-    *pend=pv;
+    Node *pv = new Node;
+    pv->d = d;
+    pv->next = 0;
+    pv->prev = *pend;
+    (*pend)->next = pv;
+    *pend = pv;
+}
+
+void printList(Node *list)
+{
+    Node *pv = list;
+    while (pv) {
+        cout << pv->d << " ";
+        pv = pv->next;
+    }
+    cout << endl;
+}
+
+Node *sortirovka(Node *list1, Node *list2)
+{
+    Node *pbeg3 = nullptr;
+    Node *pend3 = nullptr;
+
+    // Функция для добавления элемента в третий список
+    auto addToThirdList = [&](int value) {
+        if (!pbeg3) {
+            pbeg3 = first(value);
+            pend3 = pbeg3;
+        } else {
+            add(&pend3, value);
+        }
+    };
+
+    // Сначала добавляем отрицательные элементы из первого списка
+    Node *current = list1;
+    while (current) {
+        if (current->d < 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    // Затем отрицательные элементы из второго списка
+    current = list2;
+    while (current) {
+        if (current->d < 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    // Затем нули из первого списка
+    current = list1;
+    while (current) {
+        if (current->d == 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    // Затем нули из второго списка
+    current = list2;
+    while (current) {
+        if (current->d == 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    // Затем положительные элементы из первого списка
+    current = list1;
+    while (current) {
+        if (current->d > 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    // Затем положительные элементы из второго списка
+    current = list2;
+    while (current) {
+        if (current->d > 0) {
+            addToThirdList(current->d);
+        }
+        current = current->next;
+    }
+
+    return pbeg3;
 }
