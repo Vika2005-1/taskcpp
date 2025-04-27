@@ -1,0 +1,92 @@
+#Рабочая версия от 13.04.2025 Версия 1.0. Добавление триггера
+import sqlite3
+
+conn = sqlite3.connect('carsparking.db')
+cursor = conn.cursor()
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Colors (
+    color_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    color TEXT NOT NULL UNIQUE
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Cars (
+    car_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    car_number TEXT NOT NULL UNIQUE,
+    color_id INTEGER NOT NULL,
+    FOREIGN KEY (color_id) REFERENCES Colors (color_id)
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Clients (
+    client_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_fio TEXT NOT NULL
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Operations (
+    operation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    operation_name TEXT NOT NULL UNIQUE
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Journal (
+    journal_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    car_id INTEGER NOT NULL,
+    client_id INTEGER NOT NULL,
+    operation_id INTEGER NOT NULL,
+    special_signs TEXT,
+    journal_date TEXT NOT NULL,
+    FOREIGN KEY (car_id) REFERENCES Cars (car_id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Clients (client_id) ON DELETE CASCADE,
+    FOREIGN KEY (operation_id) REFERENCES Operations (operation_id) ON DELETE CASCADE
+)
+''')
+
+# Создание таблицы для журнала изменений (если она еще не существует)
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS JournalChanges (
+    change_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_journal_id INTEGER NOT NULL,
+    car_id INTEGER NOT NULL,
+    client_id INTEGER NOT NULL,
+    operation_id INTEGER NOT NULL,
+    special_signs TEXT,
+    change_date TEXT NOT NULL,
+    FOREIGN KEY (original_journal_id) REFERENCES Journal (journal_id),
+    FOREIGN KEY (car_id) REFERENCES Cars (car_id),
+    FOREIGN KEY (client_id) REFERENCES Clients (client_id),
+    FOREIGN KEY (operation_id) REFERENCES Operations (operation_id)
+)
+''')
+# Создание триггера для фиксации добавления записей
+cursor.execute('''
+CREATE TRIGGER IF NOT EXISTS log_journal_insert
+AFTER INSERT ON Journal
+FOR EACH ROW
+BEGIN
+    INSERT INTO JournalChanges (
+        original_journal_id,
+        car_id,
+        client_id,
+        operation_id,
+        special_signs,
+        change_date
+    ) VALUES (
+        NEW.journal_id,
+        NEW.car_id,
+        NEW.client_id,
+        NEW.operation_id,
+        NEW.special_signs,
+        datetime('now')
+    );
+END;
+''')
+
+conn.commit()
+conn.close()
