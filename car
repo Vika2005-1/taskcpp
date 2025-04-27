@@ -1,0 +1,128 @@
+import sqlite3
+import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
+
+# Установка соединения с базой данных
+conn = sqlite3.connect('carsparking.db')
+cursor = conn.cursor()
+
+# Создание основного окна приложения
+root = tk.Tk()
+root.title("Учёт автомобилей на стоянке")
+root.geometry("400x200")
+root.configure(bg='#add8e6')
+
+# Функция для загрузки данных
+def load_data(table, column):
+    cursor.execute(f"SELECT {column} FROM {table}")
+    return [row[0] for row in cursor.fetchall()]
+
+# Загрузка данных для выпадающих списков
+colors = load_data("Colors", "color")
+operations = load_data("Operations", "operation_name")
+
+# Элементы интерфейса
+tk.Label(root, text="Цвет автомобиля:", bg='#add8e6').grid(row=0, column=0, padx=10, pady=5)
+color_combo = ttk.Combobox(root, values=colors)
+color_combo.grid(row=0, column=1, padx=10, pady=5)
+
+def add_color():
+    new_color = color_combo.get().strip()
+    if new_color and new_color not in colors:
+        cursor.execute('INSERT INTO Colors (color) VALUES (?)', (new_color,))
+        conn.commit()
+        colors.append(new_color)
+        color_combo['values'] = colors
+        status_label.config(text=f'Добавлен цвет "{new_color}"', fg="green")
+
+tk.Button(root, text="Добавить", command=add_color, bg='#90EE90', width=7).grid(row=0, column=2)
+
+tk.Label(root, text="Номер автомобиля:", bg='#add8e6').grid(row=1, column=0, padx=10, pady=5)
+number_entry = tk.Entry(root)
+number_entry.grid(row=1, column=1, padx=10, pady=5)
+
+tk.Label(root, text="ФИО клиента:", bg='#add8e6').grid(row=2, column=0, padx=10, pady=5)
+client_entry = tk.Entry(root)
+client_entry.grid(row=2, column=1, padx=10, pady=5)
+
+tk.Label(root, text="Операция:", bg='#add8e6').grid(row=3, column=0, padx=10, pady=5)
+operation_combo = ttk.Combobox(root, values=operations)
+operation_combo.grid(row=3, column=1, padx=10, pady=5)
+
+def add_operation():
+    new_operation = operation_combo.get().strip()
+    if new_operation and new_operation not in operations:
+        cursor.execute('INSERT INTO Operations (operation_name) VALUES (?)', (new_operation,))
+        conn.commit()
+        operations.append(new_operation)
+        operation_combo['values'] = operations
+        status_label.config(text=f'Добавлена операция "{new_operation}"', fg="green")
+
+tk.Button(root, text="Добавить", command=add_operation, bg='#90EE90', width=7).grid(row=3, column=2)
+
+tk.Label(root, text="Особые отметки:", bg='#add8e6').grid(row=4, column=0, padx=10, pady=5)
+notes_entry = tk.Entry(root)
+notes_entry.grid(row=4, column=1, padx=10, pady=5)
+
+status_label = tk.Label(root, text="", bg='#add8e6')
+status_label.grid(row=6, columnspan=3)
+
+def save_data():
+    color = color_combo.get().strip()
+    number = number_entry.get().strip()
+    client = client_entry.get().strip()
+    operation = operation_combo.get().strip()
+    notes = notes_entry.get().strip()
+
+    if not all([color, number, client, operation]):
+        status_label.config(text="Заполните все поля!", fg="red")
+        return
+
+    try:
+        cursor.execute('INSERT OR IGNORE INTO Colors (color) VALUES (?)', (color,))
+        cursor.execute('SELECT color_id FROM Colors WHERE color = ?', (color,))
+        color_id = cursor.fetchone()[0]
+
+        cursor.execute('INSERT OR IGNORE INTO Clients (client_fio) VALUES (?)', (client,))
+        cursor.execute('SELECT client_id FROM Clients WHERE client_fio = ?', (client,))
+        client_id = cursor.fetchone()[0]
+
+        cursor.execute('INSERT INTO Cars (car_number, color_id) VALUES (?, ?)', (number, color_id))
+        car_id = cursor.lastrowid
+
+        cursor.execute('INSERT OR IGNORE INTO Operations (operation_name) VALUES (?)', (operation,))
+        cursor.execute('SELECT operation_id FROM Operations WHERE operation_name = ?', (operation,))
+        operation_id = cursor.fetchone()[0]
+
+        cursor.execute('''
+            INSERT INTO Journal 
+            (car_id, client_id, operation_id, special_signs, journal_date) 
+            VALUES (?, ?, ?, ?, datetime('now'))
+        ''', (car_id, client_id, operation_id, notes if notes else None))
+
+        conn.commit()
+        status_label.config(text="Данные сохранены!", fg="green")
+
+        number_entry.delete(0, tk.END)
+        client_entry.delete(0, tk.END)
+        notes_entry.delete(0, tk.END)
+
+    except Exception as e:
+        conn.rollback()
+        status_label.config(text=f"Ошибка: {e}", fg="red")
+
+tk.Button(root, text="Сохранить", command=save_data, bg='#90EE90').grid(row=5, columnspan=3, pady=10)
+
+def filter_combobox(event, combo, values):
+    text = event.widget.get()
+    if text == '':
+        combo['values'] = values
+    else:
+        combo['values'] = [v for v in values if text.lower() in v.lower()]
+
+color_combo.bind('<KeyRelease>', lambda e: filter_combobox(e, color_combo, colors))
+operation_combo.bind('<KeyRelease>', lambda e: filter_combobox(e, operation_combo, operations))
+
+root.mainloop()
+conn.close()
