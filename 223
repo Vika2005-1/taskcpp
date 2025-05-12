@@ -1,0 +1,77 @@
+#include <iostream>
+
+struct Node {
+    int d;          // Значение узла
+    int count;      // Счетчик для количества повторений
+    Node *left;     // Указатель на левое поддерево
+    Node *right;    // Указатель на правое поддерево
+};
+
+// Функция для создания первого узла дерева
+Node* createNode(int d) {
+    Node* pv = new Node;
+    pv->d = d;
+    pv->count = 1; // Первоначальное количество повторений
+    pv->left = nullptr;
+    pv->right = nullptr;
+    return pv;
+}
+
+// Функция для поиска с вставкой
+Node* searchInsert(Node* root, int d) {
+    Node* pv = root;
+    Node* prev = nullptr;
+    bool found = false;
+
+    // Поиск узла или места для вставки
+    while (pv) {
+        prev = pv;
+        if (d == pv->d) {
+            // Если элемент найден, увеличить счетчик
+            pv->count++;
+            found = true;
+            break; // Прерываем цикл, так как элемент уже существует
+        } else if (d < pv->d) {
+            pv = pv->left;
+        } else {
+            pv = pv->right;
+        }
+    }
+
+    // Если элемент не был найден, создаем новый узел
+    if (!found) {
+        Node* pnew = createNode(d);
+        if (d < prev->d) {
+            prev->left = pnew; // Присоединение к левому поддереву
+        } else {
+            prev->right = pnew; // Присоединение к правому поддереву
+        }
+        return pnew;
+    }
+    return pv; // Вернуть найденный узел
+}
+
+// Функция для обхода дерева и вывода результатов
+void printTree(Node* p) {
+    if (p) {
+        printTree(p->left); // Обход левого поддерева
+        // Вывод значения узла и его счетчика
+        std::cout << p->d << " (количество: " << p->count << ")" << std::endl;
+        printTree(p->right); // Обход правого поддерева
+    }
+}
+
+int main() {
+    int b[] = {10, 25, 20, 6, 21, 8, 1, 30, 10, 25}; // Пример входа
+    Node* root = createNode(b[0]);
+
+    // Вставка всех элементов в бинарное дерево
+    for (int i = 1; i < sizeof(b) / sizeof(b[0]); i++) {
+        searchInsert(root, b[i]);
+    }
+
+    std::cout << "Элементы и их количество повторений в порядке возрастания:" << std::endl;
+    printTree(root); // Печать дерева с повторениями
+
+    return 0;
+}
